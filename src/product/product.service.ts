@@ -14,8 +14,18 @@ export class ProductService {
     return createdProduct.save();
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productModel.find().exec();
+  async findAll(name: string, category: string, volume: string): Promise<Product[]> {
+    interface Query {
+      name: {}
+      category: {}
+      'details.volume': {}
+    }
+    let query: Query = {
+      name: { $regex: name? name: "", $options: 'i' },
+      category: { $regex: category? category: "", $options: 'i'},
+      'details.volume' : { $regex: volume? volume: "", $options: 'i' }
+    }
+    return this.productModel.find(query).exec();
   }
 
   async findOne(id: string): Promise<Product | null> {
